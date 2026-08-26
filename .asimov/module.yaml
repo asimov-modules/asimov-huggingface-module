@@ -1,0 +1,29 @@
+# See: https://asimov-specs.github.io/module-manifest/
+---
+name: huggingface
+label: Hugging Face
+title: ASIMOV Hugging Face Module
+summary: Hugging Face Hub repository metadata support.
+links:
+  - https://github.com/asimov-modules/asimov-huggingface-module
+  - https://crates.io/crates/asimov-huggingface-module
+
+provides:
+  programs:
+    - asimov-huggingface-fetcher
+
+handles:
+  url_protocols:
+  url_prefixes:
+    - https://huggingface.co/
+    - https://hf.co/
+  url_patterns:
+  file_extensions:
+  content_types:
+
+config:
+  variables:
+    - name: token
+      environment: ASIMOV_HUGGINGFACE_TOKEN
+      secret: true
+      optional: true
