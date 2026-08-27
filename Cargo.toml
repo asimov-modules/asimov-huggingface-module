@@ -2,28 +2,50 @@
 
 [package]
 name = "asimov-huggingface-module"
-version = "0.0.0"
-authors = ["ASIMOV Protocol <support@asimov.so>"]
+version = "0.0.1"
+authors = ["ASIMOV Community"]
 edition = "2024"
 #rust-version = "1.85"
-description = "ASIMOV module for model downloads from the Hugging Face Hub platform."
+description = "ASIMOV module for Hugging Face Hub repository metadata (models, datasets, commits, authors)."
 #documentation = "https://docs.rs/asimov-huggingface-module"
 readme = true
 homepage = "https://github.com/asimov-modules"
 repository = "https://github.com/asimov-modules/asimov-huggingface-module"
 license = "Unlicense"
-keywords = ["asimov-module", "asimov", "ai"]
+keywords = ["asimov-module", "asimov", "huggingface", "ai"]
 categories = ["command-line-utilities", "text-processing"]
 publish = true
 
 [features]
-default = ["all", "std"]
-all = []
-std = ["asimov-module/std"]
+default = ["all", "cli", "std"]
+all = ["tracing"]
+cli = ["asimov-module/cli", "std", "dep:clap", "dep:clientele"]
+std = ["asimov-module/std", "dep:serde", "dep:serde_json", "dep:ureq"]
+tracing = ["asimov-module/tracing", "clientele?/tracing"]
 unstable = []
 
 [dependencies]
-asimov-module = { version = "25.0.0-dev.7", default-features = false }
+asimov-module = { version = "25.0.0-dev.21", default-features = false }
+clap = { version = "4.5", default-features = false, features = [
+  "std",
+  "derive",
+  "help",
+  "usage",
+], optional = true }
+clientele = { version = "0.3.7", default-features = false, features = [
+  "clap",
+  "std",
+], optional = true }
+serde = { version = "1", default-features = false, features = [
+  "derive",
+], optional = true }
+serde_json = { version = "1", default-features = false, features = [
+  "std",
+], optional = true }
+ureq = { version = "2.10", default-features = false, features = [
+  "tls",
+  "gzip",
+], optional = true }
 
 [profile.release]
 opt-level = "z"
@@ -31,5 +53,6 @@ strip = true
 lto = "thin"
 
 [[bin]]
-name = "asimov-huggingface-cataloger"
-path = "src/main.rs"
+name = "asimov-huggingface-fetcher"
+path = "src/fetcher/main.rs"
+required-features = ["cli"]
