@@ -150,14 +150,16 @@ pub struct RepoInfo {
 impl RepoInfo {
     /// The declared license, taken from the model card or a `license:<id>` tag.
     pub fn license(&self) -> Option<String> {
-        if let Some(card) = &self.card_data
-            && let Some(serde_json::Value::String(s)) = &card.license
-        {
-            return Some(s.clone());
-        }
-        self.tags
-            .iter()
-            .find_map(|t| t.strip_prefix("license:").map(|s| s.to_string()))
+        self.card_data
+            .as_ref()
+            .and_then(|c| c.license.as_ref())
+            .and_then(|v| v.as_str())
+            .map(|s| s.to_string())
+            .or_else(|| {
+                self.tags
+                    .iter()
+                    .find_map(|t| t.strip_prefix("license:").map(|s| s.to_string()))
+            })
     }
 
     /// The tracked file names for this repository.
@@ -211,7 +213,6 @@ impl CommitAuthor {
 
 /// The access token for gated/private repositories, taken from (in order)
 /// `ASIMOV_HUGGINGFACE_TOKEN`, `HF_TOKEN`, or `HUGGING_FACE_HUB_TOKEN`.
-#[cfg(feature = "std")]
 fn hf_token() -> Option<String> {
     [
         "ASIMOV_HUGGINGFACE_TOKEN",
@@ -223,7 +224,6 @@ fn hf_token() -> Option<String> {
 }
 
 /// Perform an (optionally authenticated) GET against the Hub API.
-#[cfg(feature = "std")]
 fn hf_get(url: &str) -> Result<String, String> {
     let mut req = ureq::get(url);
     if let Some(token) = hf_token() {
@@ -242,7 +242,6 @@ fn hf_get(url: &str) -> Result<String, String> {
 }
 
 /// Fetch repository metadata from the Hub API.
-#[cfg(feature = "std")]
 pub fn fetch_repo(r: &RepoRef) -> Result<RepoInfo, String> {
     let url = format!(
         "https://huggingface.co/api/{}/{}",
@@ -254,7 +253,6 @@ pub fn fetch_repo(r: &RepoRef) -> Result<RepoInfo, String> {
 }
 
 /// Fetch commit history from the Hub API (newest first). `max` caps the count.
-#[cfg(feature = "std")]
 pub fn fetch_commits(r: &RepoRef, max: Option<usize>) -> Result<Vec<CommitInfo>, String> {
     let mut url = format!(
         "https://huggingface.co/api/{}/{}/commits/main",
