@@ -31,5 +31,5 @@ strip = true
 lto = "thin"
 
 [[bin]]
-name = "asimov-huggingface-cataloger"
+name = "asimov-huggingface-lister"
 path = "src/main.rs"

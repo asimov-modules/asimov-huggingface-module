@@ -21,7 +21,7 @@ cargo install asimov-huggingface-module
 ## 👉 Examples
 
 ```console
-$ asimov-huggingface-cataloger
+$ asimov-huggingface-lister
 ```
 
 ## 👨‍💻 Development
