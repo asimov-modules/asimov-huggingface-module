@@ -1,0 +1,90 @@
+# {{ project.title }}
+
+{% render 'badge/unlicense' %}
+{% render 'badge/rust-package', name: package.name %}
+
+**{{ project.summary }}**
+
+[ASIMOV] module for Hugging Face Hub repositories. Ingests a model's,
+dataset's, or space's metadata, authors, and commit history as [JSON-LD] /
+[RDF].
+
+## ✨ Features
+
+- Fetches repository metadata from the Hugging Face Hub API (no local clone).
+- Accepts either a bare id (`org/name`, `name`) or a full `huggingface.co` /
+  `hf.co` URL, auto-detecting models, datasets, and spaces.
+- Emits one `Repository` node (downloads, likes, license, pipeline tag,
+  library, tags, files) plus one `git:Commit` per commit -- chained by
+  `parent` -- and one `schema:Person` per distinct author handle.
+- Loads environment variables from `.env` (aka dotenv) files.
+- Distributed as a standalone static binary with zero runtime dependencies.
+
+## 🛠️ Prerequisites
+
+- [Rust] 1.85+ (2024 edition) if building from source code.
+
+## ⬇️ Installation
+
+### Installation with the [ASIMOV CLI]
+
+```bash
+asimov module install {{ project.name }} -v
+```
+
+### Installation from Source Code
+
+```bash
+cargo install {{ package.name }}
+```
+
+## 👉 Examples
+
+```bash
+asimov-huggingface-fetcher -o jsonld meta-llama/Llama-3-8B
+asimov-huggingface-fetcher -o jsonld https://huggingface.co/google-bert/bert-base-uncased
+asimov-huggingface-fetcher -o cli -n 5 https://huggingface.co/datasets/rajpurkar/squad
+```
+
+## ⚙ Configuration
+
+This module requires no configuration. To access gated or private
+repositories, supply a Hugging Face access token via the
+`ASIMOV_HUGGINGFACE_TOKEN` environment variable (the standard `HF_TOKEN` and
+`HUGGING_FACE_HUB_TOKEN` variables are also honored).
+
+## 📚 Reference
+
+### Command-Line Interface
+
+- `asimov-huggingface-fetcher`: ingests a Hugging Face Hub repository as RDF
+
+#### `asimov-huggingface-fetcher`
+
+{% render '.config/readmer/asimov-huggingface-fetcher.sh-session' %}
+
+## 👨‍💻 Development
+
+```bash
+git clone {{ github.repository.url }}
+```
+
+### Vocabulary
+
+This module emits `schema:` terms for the repository/person facets the Hub
+exposes natively, alongside the `git:` vocabulary (`Commit`, `authoredBy`,
+`parent`, `authorDate`, `message`) shared with the [ASIMOV Git module], plus
+an inline `hf:` namespace for Hub-specific counters (`downloads`, `likes`,
+`pipelineTag`, `library`, `file`).
+
+---
+
+{% render 'footer/share', title: project.title, url: github.repository.link %}
+
+[ASIMOV]: https://asimov.sh
+[ASIMOV CLI]: https://cli.asimov.sh
+[ASIMOV Git module]: https://github.com/asimov-modules/asimov-git-module
+[JSON-LD]: https://json-ld.org
+[KNOW]: https://know.dev
+[RDF]: https://www.w3.org/TR/rdf12-primer/
+[Rust]: https://rust-lang.org
